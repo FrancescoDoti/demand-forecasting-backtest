@@ -25,7 +25,7 @@ Forecast hourly bike-rental demand for tomorrow, at midnight, on the public [UCI
 
 ### What happened, in order
 
-1. **The first model lost to the naive baseline.** LightGBM predicting raw counts reached WAPE 0.270 against the baseline's 0.261, and fell apart in April (0.445) and June (0.336). Demand grew roughly 60% from 2011 to 2012. Trees cannot extrapolate beyond the target values they were trained on, so a model trained on mostly 2011 levels under-forecast the 2012 spring.
+1. **The first model lost to the naive baseline.** LightGBM predicting raw counts reached WAPE 0.270 against the baseline's 0.261, and fell apart in April (0.445) and June (0.336). Total demand grew 65% from 2011 to 2012. Trees cannot extrapolate beyond the target values they were trained on, so a model trained on mostly 2011 levels under-forecast the 2012 spring.
 2. **I proposed a fix and tested it on dev, not on 2012.** The fix predicts `log((y+1)/(level+1))`, where `level` is last week's mean hourly demand, so the trees learn the *shape* of a day and the level carries the growth. On the 2011 dev folds this variant was actually *worse* than the original (0.269 vs 0.252), but averaging the two was best (0.243). I fixed the average as the final model.
 3. **On 2012 the pre-chosen average beat the baseline by 11.2% WAPE** and won 9 of 12 months. The level-relative model alone did almost as well there, which dev did not predict. That's the honest cost of selecting on a period with different dynamics.
 4. **The disclosure that matters:** I saw the first model's 2012 numbers before designing the alternatives, so 2012 is not perfectly untouched. The *choice between* candidates was made on dev only.
